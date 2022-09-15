@@ -1,10 +1,15 @@
 // Import packages
-const express = require("express");
-const home = require("./routes/home");
-
+import express from 'express'
+import tourRouter from "./routes/tour.js";
+import cors from 'cors'
+import dotenv from "dotenv";
+import mongoose from "mongoose";
 // Middlewares
 const app = express();
 app.use(express.json());
+app.use(cors())
+dotenv.config();
+app.use("/project", tourRouter);
 
 // Routes
 app.get("/", (req, res) => {
@@ -13,5 +18,12 @@ app.get("/", (req, res) => {
   
 
 // connection
-const port = process.env.PORT || 9001;
-app.listen(port, () => console.log(`Listening to port ${port}`));
+const port = process.env.PORT || 5000;
+
+
+mongoose
+  .connect(process.env.MONGODB_URL)
+  .then(() => {
+    app.listen(port, () => console.log(`Server running on port ${port}`));
+  })
+  .catch((error) => console.log(`${error} did not connect`));
